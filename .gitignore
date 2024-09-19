@@ -1,0 +1,29 @@
+# Node modules
+node_modules/
+
+# Compiled output
+dist/
+*.js
+*.js.map
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE configurations
+.vscode/
+.idea/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Logs and runtime data
+*.log
+pids/
+*.pid
+*.seed
+
+# Coverage reports
+coverage/
+.nyc_output/
