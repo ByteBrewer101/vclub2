@@ -1,4 +1,4 @@
-import { Chat, JoinRoom } from "./Messagetypes";
+import { Chat, formatAndSendMessage, JoinRoom } from "./Messagetypes";
 import { Room } from "./Room";
 import WebSocket from "ws";
 
@@ -29,7 +29,7 @@ export class RoomManager {
       console.log(`User ${ws} is part of room. Notifying partner.`);
       const otherUser =
         currentRoom.user1 === ws ? currentRoom.user2 : currentRoom.user1;
-      otherUser.send("Your partner has disconnected.");
+      formatAndSendMessage(otherUser,"Your partner has disconnected","System")
 
       console.log(`Moving ${otherUser} back to the lobby.`);
       this.lobby.push(otherUser);
@@ -52,7 +52,7 @@ export class RoomManager {
       if (currentMessage.type === JoinRoom) {
         console.log(`User ${ws} is attempting to join a room.`);
         // Attempt to pair with a user in the lobby
-        if (this.lobby.length > 0) {
+        if (this.lobby.length >=2) {
           const partner = this.lobby.shift()!;
           console.log(`Pairing user ${ws} with partner ${partner}.`);
           const currentRoom = new Room(ws, partner);
@@ -74,6 +74,8 @@ export class RoomManager {
         if (currentRoom) {
           console.log(`Sending message to room: ${currentMessage.content}`);
           currentRoom.sendMessage(ws, currentMessage.content);
+          
+
         } else {
           console.log(`User ${ws} is not in a room.`);
         }
