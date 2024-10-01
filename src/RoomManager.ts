@@ -145,7 +145,7 @@ export class RoomManager {
   }
 
   private sendSystemMessage(ws: WebSocket, message: string) {
-    formatAndSendMessage(ws, message, "System");
+    formatAndSendMessage(ws, message, "system");
   }
 
   private filterUser(ws: WebSocket, list: WebSocket[]): WebSocket[] {
