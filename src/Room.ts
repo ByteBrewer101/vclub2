@@ -24,4 +24,13 @@ export class Room {
   public removeUser() {
     //remove user
   }
+
+  public checkExistance (ws:WebSocket){
+    if(this.user1 === ws || this.user2 === ws)
+    {
+      return true
+    }
+    return false
+  }
+
 }
