@@ -1,6 +1,7 @@
 import { Chat, formatAndSendMessage, JoinRoom } from "./Messagetypes";
 import { Room } from "./Room";
 import WebSocket from "ws";
+import { User } from "./User";
 
 export class RoomManager {
   private Rooms: Room[];
@@ -16,6 +17,7 @@ export class RoomManager {
   addUser(ws: WebSocket) {
     console.log(`Adding user to the manager: ${ws}`);
     this.users.push(ws);
+    // const currentUser = new User
     this.addHandler(ws);
   }
 
@@ -49,6 +51,7 @@ export class RoomManager {
 
   private JoinLogic(ws: WebSocket) {
     this.disbandRoom(ws);
+    this.sendSystemMessage(ws,"Waiting for someone to join")
 
     if (this.isInLobby(ws)) {
       return;
