@@ -18,7 +18,7 @@ wss.on("connection",(ws:WebSocket)=>{
     
 
 
-    manager.addUser(ws)
+    manager.addUser(ws,"usernametest")
 
     ws.on("close",()=>{
         manager.removeUser(ws)

@@ -6,7 +6,7 @@ import { User } from "./User";
 export class RoomManager {
   private Rooms: Room[];
   private lobby: WebSocket[];
-  private users: WebSocket[];
+  private users: User[];
 
   constructor() {
     this.Rooms = [];
@@ -14,9 +14,12 @@ export class RoomManager {
     this.users = [];
   }
 
-  addUser(ws: WebSocket) {
+  addUser(ws: WebSocket, username:string) {
     console.log(`Adding user to the manager: ${ws}`);
-    this.users.push(ws);
+   
+    const currentUser = new User(username,ws)
+
+    this.users.push(currentUser);
     // const currentUser = new User
     this.addHandler(ws);
   }
