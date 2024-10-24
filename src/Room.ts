@@ -1,4 +1,5 @@
 import WebSocket from "ws";
+import { formatAndSendMessage } from "./Messagetypes";
 
 export class Room {
   public user1: WebSocket;
@@ -11,16 +12,25 @@ export class Room {
 
   public sendMessage(sender: WebSocket, msg: string) {
     if (this.user1 === sender) {
-      this.user2.send(msg);
-    } else this.user1.send(msg);
+      formatAndSendMessage(this.user2, msg, "user 2");
+    } else formatAndSendMessage(this.user1, msg, "user 1");
   }
 
-  public broadcastInRoom(msg:string){
-    this.user1.send(msg)
-    this.user2.send(msg)
+  public broadcastInRoom(msg: string) {
+    formatAndSendMessage(this.user1, msg, "system");
+    formatAndSendMessage(this.user2, msg, "system");
   }
 
   public removeUser() {
     //remove user
   }
+
+  public checkExistance (ws:WebSocket){
+    if(this.user1 === ws || this.user2 === ws)
+    {
+      return true
+    }
+    return false
+  }
+
 }

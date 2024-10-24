@@ -14,7 +14,11 @@ const wss = new WebSocketServer({server})
 const manager = new RoomManager()
 
 wss.on("connection",(ws:WebSocket)=>{
-    manager.addUser(ws)
+//change
+    
+
+
+    manager.addUser(ws,"usernametest")
 
     ws.on("close",()=>{
         manager.removeUser(ws)
