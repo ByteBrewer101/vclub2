@@ -1,10 +1,11 @@
-export class User{
-    public username:string;
-    public ws:WebSocket;
+import WebSocket from "ws";
 
-    constructor(username:string,ws:WebSocket){
-        this.username = username
-        this.ws = ws
-    }
+export class User {
+  public username: string;
+  public ws: WebSocket;
 
+  constructor(username: string, ws: WebSocket) {
+    this.username = username;
+    this.ws = ws;
+  }
 }

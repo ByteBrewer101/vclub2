@@ -1,28 +1,82 @@
+// import express from "express";
+// import WebSocket, { WebSocketServer } from "ws";
+// import { RoomManager } from "./RoomManager";
+// import { configDotenv } from "dotenv";
+// configDotenv()
+// const app = express()
+// const PORT = process.env.WORKING_PORT||5000
+// const server = app.listen(PORT,()=>{
+//     console.log("running on" + PORT);
+// })
+
+
+// const wss = new WebSocketServer({server})
+// const manager = new RoomManager()
+
+// wss.on("connection",(ws:WebSocket)=>{
+//     //change
+ 
+
+    
+//     manager.addUser(ws,"usernametest")
+
+//     ws.on("close",()=>{
+//         manager.removeUser(ws)
+//     })
+// })
+
+
 import express from "express";
-import WebSocket, { WebSocketServer } from "ws";
+import { WebSocketServer } from "ws";
 import { RoomManager } from "./RoomManager";
 import { configDotenv } from "dotenv";
-configDotenv()
-const app = express()
-const PORT = process.env.WORKING_PORT||5000
-const server = app.listen(PORT,()=>{
-    console.log("running on" + PORT);
-})
+import jwt from "jsonwebtoken";
+import { parse } from "url";
 
+configDotenv();
 
-const wss = new WebSocketServer({server})
-const manager = new RoomManager()
+const app = express();
+const PORT = process.env.WORKING_PORT || 5000;
+const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
-wss.on("connection",(ws:WebSocket)=>{
-//change
-    
+const server = app.listen(PORT, () => {
+  console.log("running on " + PORT);
+});
 
+const wss = new WebSocketServer({ noServer: true });
+const manager = new RoomManager();
 
-    manager.addUser(ws,"usernametest")
+// Handle upgrade of HTTP connection to WebSocket with JWT verification
+server.on("upgrade", (request, socket, head) => {
+  const { query } = parse(request.url || "", true);
+  const token = query.token as string;
 
-    ws.on("close",()=>{
-        manager.removeUser(ws)
-    })
-})
+  if (!token) {
+    socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
+    socket.destroy();
+    return;
+  }
 
+  try {
+    // Verify JWT token
+    const decoded = jwt.verify(token, JWT_SECRET) as { username: string };
+    const username = decoded.username;
 
+    // If token is valid, upgrade the connection
+    wss.handleUpgrade(request, socket, head, (ws) => {
+      wss.emit("connection", ws, username);
+    });
+  } catch (err) {
+    socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
+    socket.destroy();
+    return;
+  }
+});
+
+wss.on("connection", (ws, username: string) => {
+  manager.addUser(ws, username);
+
+  ws.on("close", () => {
+    manager.removeUser(ws);
+  });
+});
