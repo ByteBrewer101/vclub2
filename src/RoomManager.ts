@@ -16,11 +16,23 @@ export class RoomManager {
     this.users = [];
   }
 
-  addUser(ws: WebSocket, username: string) {
+  addUser(ws: WebSocket, username: string, userImage:string) {
     console.log(`Adding user to the manager: ${username}`);
-    const currentUser = new User(username, ws);
+    console.log(username);
+    console.log("hello");
+    const currentUser = new User(username, ws,userImage);
     this.users.push(currentUser);
     this.addHandler(ws);
+  }
+
+  public getRoom(roomID:string){
+
+     const currentRoom = this.Rooms.find((room)=>{
+     return room.getRoomID()===roomID
+    })
+
+    return currentRoom;
+
   }
 
   removeUser(ws: WebSocket) {
@@ -63,6 +75,7 @@ export class RoomManager {
       const partner = this.lobby.shift();
       if (partner) {
         this.createRoom(ws, partner.ws);
+
       }
     } else {
       this.addToLobby(ws);
@@ -164,9 +177,11 @@ export class RoomManager {
     const user2 = this.getUserByWs(partner);
 
     if (user1 && user2) {
-      const currentRoom = new Room(ws, partner, user1.username, user2.username);
+      const currentRoom = new Room(ws, partner, user1.username, user2.username,user1,user2);
       this.Rooms.push(currentRoom);
       currentRoom.broadcastInRoom("connected");
+      const currentRoomID = currentRoom.getRoomID() 
+      currentRoom.broadcastInRoomID(currentRoomID)
     }
   }
 
